@@ -13,7 +13,7 @@ export const createTodo = async (values) => {
   export const updateTodo = async (id,values) => {
     return  await axios
     .put(`${ApiBase}/todos/${id}`, values)
-    .then()
+    .then((response)=>console.log(response))
     .catch(function(error) {
       console.log(error);
     });

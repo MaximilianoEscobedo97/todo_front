@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -10,7 +10,6 @@ import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import {SwipeableTemporaryDrawer} from "../../components/sidebar"
 import Paper from '@material-ui/core/Paper';
 import { HiOutlineCheckCircle } from "react-icons/hi";
-import {Example} from "../modal"
 import {CreateModal} from "../../components/modal"
 
 const useStyles = makeStyles({
@@ -37,13 +36,21 @@ export function TableTodo(props) {
   const onSelectRow = (id) => {
     setState({toggleSidebar: true, selectedId: id})
   }
-  
+  const [editModal,setEditModal] = useState(false);
+
   const [state, setState] = useState({
     handleShow: false,
     toggleSidebar: false,
     selectedId: null,
   })
+
+  const [editData,setEditData] = useState({});
   
+  useEffect(()=>{
+    setEditModal(false);
+    props.setTableUpdate(true);
+  },[state.handleShow])
+
   const setToggleSidebar = (state_) => {
     setState(state_);
   }
@@ -79,9 +86,11 @@ export function TableTodo(props) {
         toggleSidebar={state.toggleSidebar}
         parent_state={state}
         parent_setState={setState}
+        setEditModal = {setEditModal}
+        setEditData = {setEditData}
       />
       
-      {state.handleShow && <CreateModal state={state} setState={setState} id={state.selectedId} />}
+      {editModal && <CreateModal data = {editData} title={"Edit Task"} state={state} setState={setState} id={state.selectedId} />}
 
     </div>
   );

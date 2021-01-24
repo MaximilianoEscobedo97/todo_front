@@ -14,9 +14,40 @@ export const Todo = () => {
         handleShow: false
     });
 
+    const [tableUpdate,setTableUpdate] = useState(false)
+
+
+    useEffect( async ()=>
+    {
+        console.log(tableUpdate);
+        if(tableUpdate)
+        {
+            await getRows();
+            addFilter();
+            setTableUpdate(false);
+        }
+    }, [tableUpdate])
     useEffect(() => {
         getRows();
     }, [])
+
+    useEffect(async ()=>{
+        
+        
+        if(!state.handleShow)
+        {
+            await getRows();
+            addFilter();
+        }
+
+    },[state.handleShow])
+
+    const addFilter = () =>{
+        if (state.created !== "") {
+            let todos = state.allTodos.filter(todo => todo.created === state.created)
+            setState({ ...state, todos })
+        }
+    }
 
     const getRows = async () => {
         let response = await index();
@@ -25,15 +56,11 @@ export const Todo = () => {
     }
 
     useEffect(() => {
-        if (state.created !== "") {
-            let todos = state.allTodos.filter(todo => todo.created === state.created)
-            setState({ ...state, todos })
-        }
+       addFilter();
     }, [state.created])
 
     const handleOnchange = (e) => {
         setState({ ...state, [e.target.name]: e.target.value });
-        console.log(state);
     }
 
     const handleButtonCreate =()=>
@@ -50,7 +77,7 @@ export const Todo = () => {
                         <h5 className="font-weight-bold m-2">Tasks</h5>
                     </div>
                     <div className="row">
-                        <div className="align-self-end">
+                        <div className="align-self-end ml-3">
                             <TextField
                                 type="date"
                                 id="created"
@@ -76,10 +103,13 @@ export const Todo = () => {
                     </div>
                 </div>
 
-                <TableTodo rows={state.todos}/>
+                <TableTodo rows={state.todos} setTableUpdate={setTableUpdate}/>
+
             {state.handleShow && <CreateModal
+             title = {"New Task"}
              state = {state}
              setState = {setState}
+            
             />}
             </div>
 
